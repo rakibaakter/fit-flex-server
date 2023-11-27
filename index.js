@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const subscriberCollection = client.db("fitflex").collection("subscribers");
+    const galleryCollection = client.db("fitflex").collection("gallery");
 
     // subscriber related api
     app.post("/subscribers", async (req, res) => {
@@ -43,6 +44,13 @@ async function run() {
       }
 
       const result = await subscriberCollection.insertOne(subscriber);
+      res.send(result);
+    });
+
+    // get gallery api
+    app.get("/gallery", async (req, res) => {
+      const cursor = galleryCollection.find();
+      const result = await cursor.toArray();
       res.send(result);
     });
 
