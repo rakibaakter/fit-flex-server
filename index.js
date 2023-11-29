@@ -27,6 +27,7 @@ async function run() {
 
     const subscriberCollection = client.db("fitflex").collection("subscribers");
     const galleryCollection = client.db("fitflex").collection("gallery");
+    const classCollection = client.db("fitflex").collection("classes");
 
     // subscriber related api
     app.post("/subscribers", async (req, res) => {
@@ -47,9 +48,16 @@ async function run() {
       res.send(result);
     });
 
-    // get gallery api
+    //  gallery related api
     app.get("/gallery", async (req, res) => {
       const cursor = galleryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    // class related api
+    app.get("/classes", async (req, res) => {
+      const cursor = classCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
