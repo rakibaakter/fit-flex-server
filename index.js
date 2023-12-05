@@ -23,12 +23,13 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
 
     const subscriberCollection = client.db("fitflex").collection("subscribers");
     const galleryCollection = client.db("fitflex").collection("gallery");
     const classCollection = client.db("fitflex").collection("classes");
     const trainerCollection = client.db("fitflex").collection("trainers");
+    const userCollection = client.db("fitflex").collection("users");
 
     // subscriber related api
     app.post("/subscribers", async (req, res) => {
@@ -79,16 +80,39 @@ async function run() {
 
     app.get("/trainers/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
+      const query = { _id: id };
       const result = await trainerCollection.findOne(query);
       res.send(result);
     });
 
+    app.post("/trainers", async (req, res) => {
+      const trainer = req.body;
+      const result = await trainerCollection.insertOne(trainer);
+      res.send(result);
+    });
+
+    //user related api
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email };
+      const isUserExist = await userCollection.findOne(query);
+
+      if (isUserExist) {
+        return res.send({
+          message: `${user.email} already exist in database`,
+          insertedId: null,
+        });
+      }
+      // console.log(user);
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    });
+
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
