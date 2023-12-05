@@ -32,6 +32,12 @@ async function run() {
     const userCollection = client.db("fitflex").collection("users");
 
     // subscriber related api
+    app.get("/subscribers", async (req, res) => {
+      const cursor = subscriberCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     app.post("/subscribers", async (req, res) => {
       const subscriber = req.body;
 
